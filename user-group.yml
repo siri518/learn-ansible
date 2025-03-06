@@ -1,0 +1,20 @@
+- name: User and Group Management
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Create Group "devops"
+    group:
+      name: devops
+      state: present
+  - name: Adding john to devops group
+    user:
+      name: john
+      groups: devops
+      password: "{{ 'Password@123' | password_hash('sha512') }}"
+      state: present
+  - name: add Sudo access for user
+    lineinfile:
+      path: /etc/sudoers
+      line: "john ALL=(ALL) NOPASSWD:ALL"
+      validate: "visudo -cf %s"
